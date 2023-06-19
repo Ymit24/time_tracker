@@ -154,7 +154,7 @@ const darkTheme = createTheme({
 
 export default function Home() {
     useEffect(() => {
-        let originalExistingTimesheet = JSON.parse(localStorage.getItem('timesheet') || '{entries: []}') as TimeSheet;
+        let originalExistingTimesheet = JSON.parse(localStorage.getItem('timesheet') || '{"entries": []}') as TimeSheet;
         const existingTimesheet = {
             entries: originalExistingTimesheet.entries.map((entry) => ({
                 ...entry,
