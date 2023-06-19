@@ -1,34 +1,9 @@
 'use client'
 import { Backdrop, Box, Button, Stack, CircularProgress, Container, CssBaseline, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider, Typography, createTheme, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Icon } from '@mui/material'
 import { ChangeEvent, useEffect, useState } from 'react';
-import DeleteOutlineIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-
-function SimpleBackdrop() {
-    const [open, setOpen] = useState(false);
-    const handleClose = () => {
-        setOpen(false);
-    };
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-    return (
-        <div>
-            <Button onClick={handleOpen}>Show backdrop</Button>
-            <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={open}
-                onClick={handleClose}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
-        </div>
-    );
-}
 
 function createData(
     id: number,
@@ -70,13 +45,6 @@ type TimeEntry = {
 type TimeSheet = {
     entries: TimeEntry[]
 };
-
-const seedRows = [
-    createData(0, "Ticket #3", new Date(2023, 5, 18, 7), new Date(2023, 5, 18, 8)),
-    createData(1, "Meeting", new Date(2023, 5, 18, 8), new Date(2023, 5, 18, 8, 30)),
-    createData(2, "Ticket #1", new Date(2023, 5, 18, 8, 30), new Date(2023, 5, 18, 9)),
-    createData(3, "Ticket #7", new Date(2023, 5, 18, 9)),
-];
 
 function BasicTable({
     timeSheet,
@@ -291,7 +259,7 @@ export default function Home() {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Stack direction='row' spacing='12px'>
                             <TextField error={titleIsError} value={newEntryTitle} onChange={onChangeNewEntryTitle} label='Name' variant='outlined' />
-                            <Button variant="outlined" onClick={createNewEntry}>new</Button>
+                            <Button variant="outlined" onClick={createNewEntry} color='success'>new</Button>
                         </Stack>
                         <Stack direction='row' spacing='12px'>
                             {activeView == 'entries' && <Button variant="outlined" color='secondary' onClick={() => setActiveView('summary')}>show summary</Button>}
