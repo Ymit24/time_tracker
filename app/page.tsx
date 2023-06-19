@@ -153,15 +153,18 @@ const darkTheme = createTheme({
 });
 
 export default function Home() {
-    let originalExistingTimesheet = JSON.parse(localStorage.getItem('timesheet') || '{entries: []}') as TimeSheet;
-    const existingTimesheet = {
-        entries: originalExistingTimesheet.entries.map((entry) => ({
-            ...entry,
-            start: new Date(entry.start),
-            stop: new Date(entry.stop || 0),
-        }))
-    };
-    const [timesheet, setTimesheet] = useState<TimeSheet>(existingTimesheet);
+    useEffect(() => {
+        let originalExistingTimesheet = JSON.parse(localStorage.getItem('timesheet') || '{entries: []}') as TimeSheet;
+        const existingTimesheet = {
+            entries: originalExistingTimesheet.entries.map((entry) => ({
+                ...entry,
+                start: new Date(entry.start),
+                stop: new Date(entry.stop || 0),
+            }))
+        };
+        setTimesheet(existingTimesheet);
+    }, []);
+    const [timesheet, setTimesheet] = useState<TimeSheet>({ entries: [] });
     const [titleIsError, setTitleIsError] = useState(false);
 
     const [newEntryTitle, setNewEntryTitle] = useState("");
