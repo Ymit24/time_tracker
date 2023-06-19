@@ -1,6 +1,11 @@
 'use client'
-import { Backdrop, Box, Button, Stack, CircularProgress, Container, CssBaseline, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider, Typography, createTheme, TextField } from '@mui/material'
+import { Backdrop, Box, Button, Stack, CircularProgress, Container, CssBaseline, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ThemeProvider, Typography, createTheme, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Icon } from '@mui/material'
 import { ChangeEvent, useEffect, useState } from 'react';
+import DeleteOutlineIcon from '@mui/icons-material/Delete';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
 function SimpleBackdrop() {
     const [open, setOpen] = useState(false);
@@ -73,17 +78,28 @@ const seedRows = [
     createData(3, "Ticket #7", new Date(2023, 5, 18, 9)),
 ];
 
-function BasicTable({ timeSheet, stopEntryFunc, newEntryFrom }: { timeSheet: TimeSheet, stopEntryFunc: (id: number) => void, newEntryFrom: (entry: TimeEntry) => void }) {
+function BasicTable({
+    timeSheet,
+    stopEntryFunc,
+    newEntryFrom,
+    deleteEntryFunc
+}: {
+    timeSheet: TimeSheet,
+    stopEntryFunc: (id: number) => void,
+    newEntryFrom: (entry: TimeEntry) => void,
+    deleteEntryFunc: (id: number) => void
+}
+) {
     return (
         <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table aria-label="simple table">
                 <TableHead>
                     <TableRow>
                         <TableCell>Name</TableCell>
                         <TableCell align="right">Start</TableCell>
                         <TableCell align="right">Stop</TableCell>
                         <TableCell align="right">Duration</TableCell>
-                        <TableCell align="right">Controls</TableCell>
+                        <TableCell align="center">Controls</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -98,10 +114,15 @@ function BasicTable({ timeSheet, stopEntryFunc, newEntryFrom }: { timeSheet: Tim
                             <TableCell align="right">{row.start?.toLocaleString()}</TableCell>
                             <TableCell align="right">{row.isStopped ? row.stop?.toLocaleString() : "In Progress"}</TableCell>
                             <TableCell align="right">{getDurationStrForDates(row.start, row.stop)}</TableCell>
-                            <TableCell align="right">{!row.isStopped ?
-                                <Button onClick={() => stopEntryFunc(row.id)}>Stop</Button>
-                                : <Button onClick={() => newEntryFrom(row)}>New</Button>
-                            }</TableCell>
+                            <TableCell align="right">
+                                <Box sx={{ display: 'flex', justifyContent: 'right' }}>
+                                    {!row.isStopped ?
+                                        <Button onClick={() => stopEntryFunc(row.id)} color='secondary'><StopCircleOutlinedIcon /></Button>
+                                        : <Button onClick={() => newEntryFrom(row)}><AddCircleOutlineOutlinedIcon /></Button>
+                                    }
+                                    <Button color='error' onClick={() => deleteEntryFunc(row.id)}><DeleteForeverOutlinedIcon /></Button>
+                                </Box>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -114,7 +135,7 @@ function getDurationOf(entry: TimeEntry): number {
     return (entry.stop || new Date()).valueOf() - entry.start.valueOf();
 }
 
-function CondensedTable({ timeSheet }: { timeSheet: TimeSheet }) {
+function SummaryTable({ timeSheet }: { timeSheet: TimeSheet }) {
     const rows: { name: string, durationStr: string, durationRaw: number, entries: number }[] = [];
 
     timeSheet.entries.forEach((entry) => {
@@ -173,17 +194,30 @@ export default function Home() {
         }))
     };
     const [timesheet, setTimesheet] = useState<TimeSheet>(existingTimesheet);
+    const [titleIsError, setTitleIsError] = useState(false);
 
     const [newEntryTitle, setNewEntryTitle] = useState("");
     const onChangeNewEntryTitle = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setNewEntryTitle(e.target.value);
+        setTitleIsError(false);
+    };
+
+    const getNextId = () => {
+        if (timesheet.entries.length == 0) return 0;
+        const highestEntryId = timesheet.entries.reduce((acc, entry) => entry.id > acc.id ? entry : acc);
+        return highestEntryId.id + 1;
     };
 
     const createNewEntry = () => {
+        if (newEntryTitle.length == 0) {
+            setTitleIsError(true);
+            return;
+        }
+        setTitleIsError(false);
         setTimesheet({
             entries: [
                 ...timesheet.entries,
-                createData(timesheet.entries.length, newEntryTitle, new Date())
+                createData(getNextId(), newEntryTitle, new Date())
             ]
         });
         setNewEntryTitle("");
@@ -206,7 +240,15 @@ export default function Home() {
         setTimesheet({
             entries: [
                 ...timesheet.entries,
-                createData(timesheet.entries.length, entry.name, new Date())
+                createData(getNextId(), entry.name, new Date())
+            ]
+        });
+    };
+
+    const deleteEntry = (entryId: number) => {
+        setTimesheet({
+            entries: [
+                ...timesheet.entries.filter((entry) => entry.id != entryId)
             ]
         });
     };
@@ -236,10 +278,9 @@ export default function Home() {
         localStorage.setItem('timesheet', JSON.stringify(toSave));
     }, [timesheet]);
 
-    const showOutput = () => { };
-
-    type activeViews = 'entries' | 'condensed';
+    type activeViews = 'entries' | 'summary';
     const [activeView, setActiveView] = useState<activeViews>('entries');
+    const [showingClearDialog, setShowingClearDialog] = useState(false);
 
     return (
         <ThemeProvider theme={darkTheme}>
@@ -249,15 +290,28 @@ export default function Home() {
                     <Typography variant='h3'>Time Tracker</Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Stack direction='row' spacing='12px'>
-                            <TextField value={newEntryTitle} onChange={onChangeNewEntryTitle} label='Name' variant='outlined' />
+                            <TextField error={titleIsError} value={newEntryTitle} onChange={onChangeNewEntryTitle} label='Name' variant='outlined' />
                             <Button variant="outlined" onClick={createNewEntry}>new</Button>
                         </Stack>
-                        {activeView == 'entries' && <Button variant="outlined" color='secondary' onClick={() => setActiveView('condensed')}>show condensed</Button>}
-                        {activeView == 'condensed' && <Button variant="outlined" color='secondary' onClick={() => setActiveView('entries')}>show entries</Button>}
+                        <Stack direction='row' spacing='12px'>
+                            {activeView == 'entries' && <Button variant="outlined" color='secondary' onClick={() => setActiveView('summary')}>show summary</Button>}
+                            {activeView == 'summary' && <Button variant="outlined" color='secondary' onClick={() => setActiveView('entries')}>show entries</Button>}
+                            <Button variant='outlined' color='error' onClick={() => setShowingClearDialog(true)}>Clear</Button>
+                            <Dialog
+                                open={showingClearDialog}
+                                onClose={() => setShowingClearDialog(false)}
+                            >
+                                <DialogTitle>Clear this timesheet?</DialogTitle>
+                                <DialogActions>
+                                    <Button onClick={() => { setShowingClearDialog(false); setTimesheet({ entries: [] }); }} color='warning'>Clear</Button>
+                                    <Button onClick={() => { setShowingClearDialog(false) }} autoFocus>Cancel</Button>
+                                </DialogActions>
+                            </Dialog>
+                        </Stack>
                     </Box>
-                    <Typography variant='h4'>{activeView == 'entries' ? "Entries" : "Condensed"}</Typography>
-                    {activeView == 'entries' && <BasicTable timeSheet={timesheet} stopEntryFunc={stopEntry} newEntryFrom={newEntryFrom} />}
-                    {activeView == 'condensed' && <CondensedTable timeSheet={timesheet} />}
+                    <Typography variant='h4'>{activeView == 'entries' ? "Entries" : "Summary"}</Typography>
+                    {activeView == 'entries' && <BasicTable timeSheet={timesheet} stopEntryFunc={stopEntry} newEntryFrom={newEntryFrom} deleteEntryFunc={deleteEntry} />}
+                    {activeView == 'summary' && <SummaryTable timeSheet={timesheet} />}
                 </Stack>
             </Container>
         </ThemeProvider >
