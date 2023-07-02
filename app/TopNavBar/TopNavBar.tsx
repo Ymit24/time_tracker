@@ -1,16 +1,17 @@
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from "@mui/material";
-import { useState } from "react";
+import { useState, MouseEvent } from "react";
+
 
 export default function TopNavBar() {
     const [isUserOpen, setIsUserOpen] = useState(false);
     const [userAnchorEl, setUserAnchorEl] = useState<null | HTMLElement>(null);
 
-    const handleOpenUser = (e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleOpenUser = (e: MouseEvent<HTMLElement>) => {
         setIsUserOpen(true);
-        setUserAnchorEl(e.target);
+        setUserAnchorEl(e.currentTarget);
     };
 
-    const handleCloseUser = (e: MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleCloseUser = () => {
         setIsUserOpen(false);
         setUserAnchorEl(null);
     }
@@ -51,15 +52,15 @@ export default function TopNavBar() {
                                 vertical: 'top',
                                 horizontal: 'center',
                             }}
-                            onClose={(e) => handleCloseUser(e)}
+                            onClose={() => handleCloseUser()}
                         >
-                            <MenuItem onClick={(e) => handleCloseUser(e)}>
+                            <MenuItem onClick={() => handleCloseUser()}>
                                 <Typography>Profile</Typography>
                             </MenuItem>
-                            <MenuItem onClick={(e) => handleCloseUser(e)}>
+                            <MenuItem onClick={() => handleCloseUser()}>
                                 <Typography>Settings</Typography>
                             </MenuItem>
-                            <MenuItem onClick={(e) => handleCloseUser(e)}>
+                            <MenuItem onClick={() => handleCloseUser()}>
                                 <Button variant="contained" color="error">Logout</Button>
                             </MenuItem>
                         </Menu>
