@@ -146,12 +146,6 @@ function SummaryTable({ timeSheet }: { timeSheet: TimeSheet }) {
     );
 }
 
-const darkTheme = createTheme({
-    palette: {
-        mode: 'dark',
-    },
-});
-
 export default function Home() {
     useEffect(() => {
         let originalExistingTimesheet = JSON.parse(localStorage.getItem('timesheet') || '{"entries": []}') as TimeSheet;
@@ -254,39 +248,32 @@ export default function Home() {
     const [showingClearDialog, setShowingClearDialog] = useState(false);
 
     return (
-        <NoSsr>
-            <ThemeProvider theme={darkTheme}>
-                <CssBaseline />
-                <Container maxWidth='md' sx={{ marginY: '20px' }}>
-                    <Stack spacing='1rem'>
-                        <Typography variant='h3'>Time Tracker</Typography>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Stack direction='row' spacing='12px'>
-                                <TextField error={titleIsError} value={newEntryTitle} onChange={onChangeNewEntryTitle} label='Name' variant='outlined' />
-                                <Button variant="outlined" onClick={createNewEntry} color='success'>new</Button>
-                            </Stack>
-                            <Stack direction='row' spacing='12px'>
-                                {activeView == 'entries' && <Button variant="outlined" color='secondary' onClick={() => setActiveView('summary')}>show summary</Button>}
-                                {activeView == 'summary' && <Button variant="outlined" color='secondary' onClick={() => setActiveView('entries')}>show entries</Button>}
-                                <Button variant='outlined' color='error' onClick={() => setShowingClearDialog(true)}>Clear</Button>
-                                <Dialog
-                                    open={showingClearDialog}
-                                    onClose={() => setShowingClearDialog(false)}
-                                >
-                                    <DialogTitle>Clear this timesheet?</DialogTitle>
-                                    <DialogActions>
-                                        <Button onClick={() => { setShowingClearDialog(false); setTimesheet({ entries: [] }); }} color='warning'>Clear</Button>
-                                        <Button onClick={() => { setShowingClearDialog(false) }} autoFocus>Cancel</Button>
-                                    </DialogActions>
-                                </Dialog>
-                            </Stack>
-                        </Box>
-                        <Typography variant='h4'>{activeView == 'entries' ? "Entries" : "Summary"}</Typography>
-                        {activeView == 'entries' && <BasicTable timeSheet={timesheet} stopEntryFunc={stopEntry} newEntryFrom={newEntryFrom} deleteEntryFunc={deleteEntry} />}
-                        {activeView == 'summary' && <SummaryTable timeSheet={timesheet} />}
-                    </Stack>
-                </Container>
-            </ThemeProvider >
-        </NoSsr>
+        <Stack spacing='1rem'>
+            <Typography variant='h3'>Time Tracker</Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Stack direction='row' spacing='12px'>
+                    <TextField error={titleIsError} value={newEntryTitle} onChange={onChangeNewEntryTitle} label='Name' variant='outlined' />
+                    <Button variant="outlined" onClick={createNewEntry} color='success'>new</Button>
+                </Stack>
+                <Stack direction='row' spacing='12px'>
+                    {activeView == 'entries' && <Button variant="outlined" color='secondary' onClick={() => setActiveView('summary')}>show summary</Button>}
+                    {activeView == 'summary' && <Button variant="outlined" color='secondary' onClick={() => setActiveView('entries')}>show entries</Button>}
+                    <Button variant='outlined' color='error' onClick={() => setShowingClearDialog(true)}>Clear</Button>
+                    <Dialog
+                        open={showingClearDialog}
+                        onClose={() => setShowingClearDialog(false)}
+                    >
+                        <DialogTitle>Clear this timesheet?</DialogTitle>
+                        <DialogActions>
+                            <Button onClick={() => { setShowingClearDialog(false); setTimesheet({ entries: [] }); }} color='warning'>Clear</Button>
+                            <Button onClick={() => { setShowingClearDialog(false) }} autoFocus>Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
+                </Stack>
+            </Box>
+            <Typography variant='h4'>{activeView == 'entries' ? "Entries" : "Summary"}</Typography>
+            {activeView == 'entries' && <BasicTable timeSheet={timesheet} stopEntryFunc={stopEntry} newEntryFrom={newEntryFrom} deleteEntryFunc={deleteEntry} />}
+            {activeView == 'summary' && <SummaryTable timeSheet={timesheet} />}
+        </Stack>
     )
 }
