@@ -1,5 +1,7 @@
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from "@mui/material";
 import { useState, MouseEvent } from "react";
+import { useServices } from "../providers/ServicesProvider";
+import { useActiveUser, useIsLoggedIn } from "../services/AuthService";
 
 
 export default function TopNavBar() {
@@ -15,6 +17,21 @@ export default function TopNavBar() {
         setIsUserOpen(false);
         setUserAnchorEl(null);
     }
+
+    const { auth } = useServices();
+
+    const [isLoggedIn] = useIsLoggedIn();
+    const [activeUser] = useActiveUser();
+
+    const onLogin = async () => {
+        console.log('logging in');
+        await auth?.login();
+    };
+
+    const onLogout = async () => {
+        console.log('logging out');
+        await auth?.logout();
+    };
 
     return (
         <AppBar position='static'>
@@ -54,6 +71,13 @@ export default function TopNavBar() {
                             }}
                             onClose={() => handleCloseUser()}
                         >
+                            <MenuItem disabled>
+                                {
+                                    isLoggedIn
+                                        ? <Typography>{activeUser?.username}</Typography>
+                                        : <Typography>Guest</Typography>
+                                }
+                            </MenuItem>
                             <MenuItem onClick={() => handleCloseUser()}>
                                 <Typography>Profile</Typography>
                             </MenuItem>
@@ -61,7 +85,11 @@ export default function TopNavBar() {
                                 <Typography>Settings</Typography>
                             </MenuItem>
                             <MenuItem onClick={() => handleCloseUser()}>
-                                <Button variant="contained" color="error">Logout</Button>
+                                {
+                                    isLoggedIn
+                                        ? <Button variant="contained" color="error" onClick={() => onLogout()}>Logout</Button>
+                                        : <Button variant="contained" color="primary" onClick={() => onLogin()}>Login</Button>
+                                }
                             </MenuItem>
                         </Menu>
                     </Box>

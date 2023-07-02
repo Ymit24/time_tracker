@@ -2,8 +2,10 @@
 import { AppBar, Avatar, Box, Button, Container, CssBaseline, IconButton, Menu, MenuItem, NoSsr, ThemeProvider, Toolbar, Tooltip, Typography, createTheme } from '@mui/material'
 import './globals.css'
 import { Inter } from 'next/font/google'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { TopNavBar } from './TopNavBar'
+import { Services, ServicesProvider } from './providers/ServicesProvider'
+import { BackendAuthService } from './services/AuthService'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,16 +20,21 @@ export default function RootLayout({
 }: {
     children: React.ReactNode
 }) {
+    const services = useRef<Services>({
+        auth: new BackendAuthService()
+    });
     return (
         <html lang="en">
             <body className={inter.className}>
                 <NoSsr>
                     <ThemeProvider theme={darkTheme}>
-                        <TopNavBar />
-                        <CssBaseline />
-                        <Container maxWidth='md' sx={{ marginY: '20px' }}>
-                            {children}
-                        </Container>
+                        <ServicesProvider services={services.current}>
+                            <TopNavBar />
+                            <CssBaseline />
+                            <Container maxWidth='md' sx={{ marginY: '20px' }}>
+                                {children}
+                            </Container>
+                        </ServicesProvider>
                     </ThemeProvider>
                 </NoSsr>
             </body>
