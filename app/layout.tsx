@@ -4,7 +4,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import { useRef, useState } from 'react'
 import { TopNavBar } from './TopNavBar'
-import { Services, ServicesProvider } from './providers/ServicesProvider'
+import { DefaultServices, Services, ServicesProvider } from './providers/ServicesProvider'
 import { BackendAuthService } from './services/AuthService'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -20,9 +20,7 @@ export default function RootLayout({
 }: {
     children: React.ReactNode
 }) {
-    const services = useRef<Services>({
-        auth: new BackendAuthService()
-    });
+    const services = useRef<Services>(DefaultServices);
     return (
         <html lang="en">
             <body className={inter.className}>

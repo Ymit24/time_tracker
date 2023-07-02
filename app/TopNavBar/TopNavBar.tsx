@@ -2,6 +2,7 @@ import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Too
 import { useState, MouseEvent } from "react";
 import { useServices } from "../providers/ServicesProvider";
 import { useActiveUser, useIsLoggedIn } from "../services/AuthService";
+import { useRouter } from "next/navigation";
 
 
 export default function TopNavBar() {
@@ -20,17 +21,19 @@ export default function TopNavBar() {
 
     const { auth } = useServices();
 
-    const [isLoggedIn] = useIsLoggedIn();
+    const isLoggedIn = useIsLoggedIn();
     const [activeUser] = useActiveUser();
 
+    const router = useRouter();
+
     const onLogin = async () => {
-        console.log('logging in');
-        await auth?.login();
+        setIsUserOpen(false);
+        router.push('/auth/login');
     };
 
     const onLogout = async () => {
         console.log('logging out');
-        await auth?.logout();
+        await auth.logout();
     };
 
     return (
@@ -78,13 +81,13 @@ export default function TopNavBar() {
                                         : <Typography>Guest</Typography>
                                 }
                             </MenuItem>
-                            <MenuItem onClick={() => handleCloseUser()}>
+                            <MenuItem>
                                 <Typography>Profile</Typography>
                             </MenuItem>
-                            <MenuItem onClick={() => handleCloseUser()}>
+                            <MenuItem>
                                 <Typography>Settings</Typography>
                             </MenuItem>
-                            <MenuItem onClick={() => handleCloseUser()}>
+                            <MenuItem>
                                 {
                                     isLoggedIn
                                         ? <Button variant="contained" color="error" onClick={() => onLogout()}>Logout</Button>

@@ -10,7 +10,7 @@ export interface AuthService {
         email: string
     } | undefined>;
 
-    login(): Promise<boolean>;
+    login(username: string, password: string): Promise<boolean>;
     logout(): Promise<boolean>;
 }
 
@@ -24,10 +24,11 @@ export class BackendAuthService implements AuthService {
     }
     activeUser$: BehaviorSubject<User | undefined> = new BehaviorSubject<User | undefined>(undefined);
 
-    async login(): Promise<boolean> {
+    async login(username: string, password: string): Promise<boolean> {
+        console.log('username::', username);
         this.activeUser$.next({
-            username: "bob",
-            email: "bob@gmail.com",
+            username: username,
+            email: username + '@gmail.com',
         });
         this.isLoggedIn$.next(true);
         return true;
@@ -47,11 +48,15 @@ export function useActiveUser() {
     const [activeUser, setActiveUser] = useState<User | undefined>(undefined);
 
     useEffect(() => {
-        observable.subscribe((user) => {
+        console.log('subscribing to active user');
+        const sub = observable.subscribe((user) => {
             console.log('updating user: ', user);
             setActiveUser(user);
         });
-        return observable.unsubscribe;
+        return () => {
+            console.log('unsubscribing from active user');
+            sub.unsubscribe();
+        }
     }, [observable]);
 
     return [activeUser];
@@ -64,13 +69,16 @@ export function useIsLoggedIn() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        observable.subscribe({
-            next: (status) => {
-                setIsLoggedIn(status);
-            }
+        console.log('subscribing to login');
+        const sub = observable.subscribe((status) => {
+            console.log('updating login: ', status);
+            setIsLoggedIn(status);
         });
-        return observable.unsubscribe;
+        return () => {
+            console.log('unsubscribing from login');
+            sub.unsubscribe();
+        }
     }, [observable]);
 
-    return [isLoggedIn];
+    return isLoggedIn;
 }
