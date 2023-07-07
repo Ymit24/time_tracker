@@ -34,6 +34,7 @@ export default function TopNavBar() {
     const onLogout = async () => {
         console.log('logging out');
         await auth.logout();
+        router.push('/auth');
     };
 
     return (
