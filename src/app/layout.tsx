@@ -3,9 +3,9 @@ import { AppBar, Avatar, Box, Button, Container, CssBaseline, IconButton, Menu, 
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { useRef, useState } from 'react'
-import { TopNavBar } from './TopNavBar'
-import { DefaultServices, Services, ServicesProvider } from './providers/ServicesProvider'
-import { BackendAuthService } from './services/AuthService'
+import { ServicesProvider } from '@providers/ServicesProvider'
+import { Services, DefaultServices } from '@providers/ServicesProvider';
+import { TopNavBar } from '@components/TopNavBar'
 
 const inter = Inter({ subsets: ['latin'] })
 

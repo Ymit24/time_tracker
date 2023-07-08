@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useServices } from "../providers/ServicesProvider";
 import { BehaviorSubject } from "rxjs";
+import { on } from "events";
+import { callLogin } from "../api/auth";
 
 export interface AuthService {
     isLoggedIn$: BehaviorSubject<boolean>;
@@ -24,11 +26,14 @@ export class BackendAuthService implements AuthService {
     }
     activeUser$: BehaviorSubject<User | undefined> = new BehaviorSubject<User | undefined>(undefined);
 
-    async login(username: string, password: string): Promise<boolean> {
-        console.log('username::', username);
+    async login(email: string, password: string): Promise<boolean> {
+        console.log('username::', email);
+
+        const _ = await callLogin(email, password);
+
         this.activeUser$.next({
-            username: username,
-            email: username + '@gmail.com',
+            username: email,
+            email: email,
         });
         this.isLoggedIn$.next(true);
         return true;

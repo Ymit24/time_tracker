@@ -1,7 +1,7 @@
 "use client"
 
-import { useServices } from "@/app/providers/ServicesProvider";
-import { useActiveUser, useIsLoggedIn } from "@/app/services/AuthService";
+import { useServices } from "@providers/ServicesProvider";
+import { useActiveUser, useIsLoggedIn } from "@services/AuthService";
 import { Box, Button, Card, Input, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { Container } from "postcss";
