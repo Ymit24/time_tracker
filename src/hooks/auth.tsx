@@ -1,11 +1,8 @@
 import { User } from "@models/user";
-import { useServices } from "@providers/ServicesProvider";
 import { activeUser$, isLoggedIn$ } from "@state/auth";
 import { useEffect, useState } from "react";
 
 export function useActiveUser() {
-    const { auth } = useServices();
-
     const [observable] = useState(activeUser$)
     const [activeUser, setActiveUser] = useState<User | null>(null);
 
@@ -25,8 +22,6 @@ export function useActiveUser() {
 }
 
 export function useIsLoggedIn() {
-    const { auth } = useServices();
-
     const [observable] = useState(isLoggedIn$)
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
