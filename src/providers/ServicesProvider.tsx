@@ -1,12 +1,8 @@
+"use client"
 import { ReactNode, createContext, useContext } from "react";
-import { AuthService } from "../services";
-import { BackendAuthService } from "../services/AuthService";
+import { AuthService, BackendAuthService } from "@services/AuthService";
 
-export const DefaultServices: Services = {
-    auth: new BackendAuthService(),
-};
-
-const servicesContext = createContext<Services>(DefaultServices);
+const servicesContext = createContext<Services | undefined>(undefined);
 
 export interface Services {
     auth: AuthService
@@ -14,14 +10,20 @@ export interface Services {
 
 export interface Props {
     children: ReactNode,
-    services: Services
 }
 
 export function useServices() {
-    return useContext(servicesContext);
+    const services = useContext(servicesContext);
+    if (!services) {
+        throw new Error('useServices called outside of provider!');
+    }
+    return services;
 }
 
-export function ServicesProvider({ children, services }: Props) {
+export function ServicesProvider({ children }: Props) {
+    const services = {
+        auth: new BackendAuthService(),
+    };
     return (
         <servicesContext.Provider value={services}>
             {children}

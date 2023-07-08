@@ -1,3 +1,4 @@
+"use client";
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from "@mui/material";
 import { useState, MouseEvent } from "react";
 import { useServices } from "@providers/ServicesProvider";

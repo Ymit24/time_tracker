@@ -7,13 +7,10 @@ export function useActiveUser() {
     const [activeUser, setActiveUser] = useState<User | null>(null);
 
     useEffect(() => {
-        console.log('subscribing to active user');
         const sub = observable.subscribe((user) => {
-            console.log('updating user: ', user);
             setActiveUser(user);
         });
         return () => {
-            console.log('unsubscribing from active user');
             sub.unsubscribe();
         }
     }, [observable]);
@@ -26,13 +23,10 @@ export function useIsLoggedIn() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        console.log('subscribing to login');
         const sub = observable.subscribe((status) => {
-            console.log('updating login: ', status);
             setIsLoggedIn(status);
         });
         return () => {
-            console.log('unsubscribing from login');
             sub.unsubscribe();
         }
     }, [observable]);

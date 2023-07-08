@@ -1,11 +1,9 @@
-"use client"
-import { AppBar, Avatar, Box, Button, Container, CssBaseline, IconButton, Menu, MenuItem, NoSsr, ThemeProvider, Toolbar, Tooltip, Typography, createTheme } from '@mui/material'
-import './globals.css'
+"use client";
+import { Container, CssBaseline, NoSsr, ThemeProvider, createTheme } from '@mui/material'
 import { Inter } from 'next/font/google'
-import { useRef, useState } from 'react'
 import { ServicesProvider } from '@providers/ServicesProvider'
-import { Services, DefaultServices } from '@providers/ServicesProvider';
 import { TopNavBar } from '@components/TopNavBar'
+import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,13 +18,12 @@ export default function RootLayout({
 }: {
     children: React.ReactNode
 }) {
-    const services = useRef<Services>(DefaultServices);
     return (
         <html lang="en">
             <body className={inter.className}>
                 <NoSsr>
                     <ThemeProvider theme={darkTheme}>
-                        <ServicesProvider services={services.current}>
+                        <ServicesProvider>
                             <TopNavBar />
                             <CssBaseline />
                             <Container maxWidth='md' sx={{ marginY: '20px' }}>
