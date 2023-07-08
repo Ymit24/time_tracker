@@ -1,8 +1,8 @@
 import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from "@mui/material";
 import { useState, MouseEvent } from "react";
 import { useServices } from "@providers/ServicesProvider";
-import { useActiveUser, useIsLoggedIn } from "@services/AuthService";
 import { useRouter } from "next/navigation";
+import { useActiveUser, useIsLoggedIn } from "hooks/auth";
 
 
 export default function TopNavBar() {

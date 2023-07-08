@@ -22,10 +22,12 @@
     "baseUrl": "src",
     "paths": {
         "@app/*": ["app/*"],
-        "@providers/*": ["providers/*"],
         "@api/*": ["api/*"],
+        "@models/*": ["models/*"],
+        "@providers/*": ["providers/*"],
         "@services/*": ["services/*"],
-        "@components/*": ["components/*"]
+        "@components/*": ["components/*"],
+        "@state/*": ["state/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

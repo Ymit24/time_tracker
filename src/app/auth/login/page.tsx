@@ -1,6 +1,6 @@
 "use client"
 import { useServices } from "@providers/ServicesProvider";
-import { AuthService, useIsLoggedIn } from "@services/AuthService";
+import { AuthService } from "@services/AuthService";
 import { Button, Card, Stack, TextField, Typography } from "@mui/material";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 import { useRouter } from "next/navigation";

@@ -1,12 +1,12 @@
 "use client"
 
 import { useServices } from "@providers/ServicesProvider";
-import { useActiveUser, useIsLoggedIn } from "@services/AuthService";
 import { Box, Button, Card, Input, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { Container } from "postcss";
 import { useState } from "react";
 import { setEmitFlags } from "typescript";
+import { useActiveUser, useIsLoggedIn } from "hooks/auth";
 
 
 
