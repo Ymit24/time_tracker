@@ -1,48 +1,96 @@
 import { useEffect, useState } from "react";
 import { useServices } from "../providers/ServicesProvider";
 import { BehaviorSubject } from "rxjs";
-import { on } from "events";
-import { callLogin } from "../api/auth";
+import axios from "axios";
+import Cookies from "universal-cookie";
 
 export interface AuthService {
     isLoggedIn$: BehaviorSubject<boolean>;
 
-    activeUser$: BehaviorSubject<{
-        username: string,
-        email: string
-    } | undefined>;
+    activeUser$: BehaviorSubject<User | undefined>;
 
-    login(username: string, password: string): Promise<boolean>;
-    logout(): Promise<boolean>;
+    login(username: string, password: string): Promise<void>;
+    register(email: string, username: string, password: string): Promise<boolean>;
+    logout(): Promise<void>;
 }
 
-export interface User { username: string; email: string; }
+export interface User { username: string; id: number, email: string; }
 
 export class BackendAuthService implements AuthService {
     isLoggedIn$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor() {
         console.log("Creating auth service");
+        this.init();
     }
     activeUser$: BehaviorSubject<User | undefined> = new BehaviorSubject<User | undefined>(undefined);
 
-    async login(email: string, password: string): Promise<boolean> {
-        console.log('username::', email);
-
-        const _ = await callLogin(email, password);
-
-        this.activeUser$.next({
-            username: email,
-            email: email,
-        });
-        this.isLoggedIn$.next(true);
-        return true;
+    async init(): Promise<void> {
+        const user = localStorage.getItem('user');
+        if (user) {
+            this.activeUser$.next(JSON.parse(user));
+            this.isLoggedIn$.next(true);
+        }
     }
 
-    async logout(): Promise<boolean> {
+    async login(username: string, password: string): Promise<void> {
+        console.log('username::', username);
+        this.activeUser$.next({
+            username: username,
+            email: username + '@gmail.com',
+            id: 1
+        });
+        this.isLoggedIn$.next(true);
+
+        try {
+            const res = await axios.post('http://127.0.0.1:3000/api/auth/login', {
+                email: username,
+                password: password
+            });
+
+            const token: string = res.data.token;
+            const user: User = res.data.user;
+            console.log("User::", user);
+
+            localStorage.setItem('user', JSON.stringify(user));
+
+            const cookies = new Cookies();
+            cookies.set('token', token, { path: '/' });
+
+            console.log('Cookies::', cookies.get('token'));
+
+            console.log('res::', res);
+        } catch (err) {
+            console.error('err::', err);
+        }
+
+        return;
+    }
+
+    async register(email: string, username: string, password: string): Promise<boolean> {
+        console.log('registering');
+        try {
+            const res = await axios.post('http://127.0.0.1:3000/api/auth/register', {
+                email: email,
+                username: username,
+                password_raw: password
+            });
+            console.log('res::', res);
+            localStorage.setItem('user', JSON.stringify(res.data.user));
+            return true;
+        } catch (err) {
+            console.error('err::', err);
+        }
+        return false;
+    }
+
+    async logout(): Promise<void> {
         this.activeUser$.next(undefined);
         this.isLoggedIn$.next(false);
-        return true;
+        localStorage.removeItem('user');
+        const cookies = new Cookies();
+        cookies.remove('token');
+        return;
     }
 }
 
