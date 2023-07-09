@@ -42,7 +42,7 @@ export const LoginForm = (props: Props) => {
                     {errors.password && <Typography color='error'>{errors.password?.message}</Typography>}
 
                     <Button variant='contained' type='submit'>Login</Button>
-                    <Typography variant='body1'>Dont have an account? <Link href='/auth/register'>Register</Link></Typography>
+                    <Typography variant='body1'>Dont have an account? <Link href='/register'>Register</Link></Typography>
                 </Stack>
             </form>
         </Card>

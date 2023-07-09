@@ -30,13 +30,13 @@ export default function TopNavBar() {
 
     const onLogin = async () => {
         setIsUserOpen(false);
-        router.push('/auth/login');
+        router.push('/login');
     };
 
     const onLogout = async () => {
         await auth.logout();
         enqueueSnackbar('Logged out!', { variant: 'warning' });
-        router.push('/auth');
+        router.push('/register');
     };
 
     return (

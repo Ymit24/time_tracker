@@ -60,7 +60,7 @@ export default function RegisterForm(props: Props) {
                     {errors.password_confirm && <Typography color='error'>{errors.password_confirm?.message}</Typography>}
 
                     <Button variant='contained' type='submit'>Register</Button>
-                    <Typography variant='body1'>Already have an account? <Link href='/auth/login'>Login</Link></Typography>
+                    <Typography variant='body1'>Already have an account? <Link href='/login'>Login</Link></Typography>
                 </Stack>
             </form>
         </Card>

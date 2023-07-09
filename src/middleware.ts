@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
     if (request.cookies.get('token')) {
+        console.log('we have a token!');
         return NextResponse.next();
     }
     const url = request.nextUrl.clone()
-    url.pathname = '/auth';
+    console.log('TEST2');
+    url.pathname = '/register';
     return NextResponse.redirect(url);
 }
 

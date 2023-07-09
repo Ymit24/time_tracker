@@ -66,18 +66,15 @@ export class BackendAuthService implements AuthService {
                 username: username,
                 password_raw: password
             });
-            localStorage.setItem('user', JSON.stringify({
-                username,
-                email,
-                id: -1
-            }));
-            // TODO: LOGIN AFTER SUCCESSFUL REGISTER
+            const user = res.data.user;
+            if (!user) {
+                throw new Error(`Expected user, found "${user}"`);
+            }
+
+            localStorage.setItem('user', JSON.stringify(user));
+
             isLoggedIn$.next(true);
-            activeUser$.next({
-                username,
-                email,
-                id: -1
-            });
+            activeUser$.next(user);
             return true;
         } catch (err) {
         }
