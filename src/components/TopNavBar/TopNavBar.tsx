@@ -5,6 +5,7 @@ import { useServices } from "@providers/ServicesProvider";
 import { useRouter } from "next/navigation";
 import { useActiveUser, useIsLoggedIn } from "hooks/auth";
 import { enqueueSnackbar } from "notistack";
+import Link from "next/dist/client/link";
 
 
 export default function TopNavBar() {
@@ -47,7 +48,6 @@ export default function TopNavBar() {
                         variant="h6"
                         noWrap
                         component="a"
-                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
@@ -58,7 +58,9 @@ export default function TopNavBar() {
                             textDecoration: 'none',
                         }}
                     >
-                        TIME TRACKER
+                        <Link href='/'>
+                            TIME TRACKER
+                        </Link>
                     </Typography>
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open Account">

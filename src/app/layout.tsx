@@ -28,7 +28,7 @@ export default function RootLayout({
                             <TopNavBar />
                             <CssBaseline />
                             <SnackbarProvider maxSnack={5} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} />
-                            <Container maxWidth='md' sx={{ marginY: '20px' }}>
+                            <Container maxWidth='lg' sx={{ marginY: '20px' }}>
                                 {children}
                             </Container>
                         </ServicesProvider>
