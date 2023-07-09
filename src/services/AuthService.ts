@@ -4,7 +4,7 @@ import { User } from "@models/user";
 import { activeUser$, isLoggedIn$ } from "@state/auth";
 
 export interface AuthService {
-    login(username: string, password: string): Promise<void>;
+    login(username: string, password: string): Promise<boolean>;
     register(email: string, username: string, password: string): Promise<boolean>;
     logout(): Promise<void>;
 }
@@ -28,27 +28,19 @@ export class BackendAuthService implements AuthService {
         }
     }
 
-    async login(username: string, password: string): Promise<void> {
-        activeUser$.next({
-            username: username,
-            email: username + '@gmail.com',
-            id: 1
-        });
-        isLoggedIn$.next(true);
-
+    async login(email: string, password: string): Promise<boolean> {
         try {
             const res = await axios.post('http://127.0.0.1:3000/api/auth/login', {
-                email: username,
+                email: email,
                 password: password
             });
 
             const token: string = res.data.token;
             const user: User = res.data.user;
 
-            console.log('data:', res.data);
-
             if (!token || !user) {
                 console.warn('failed to register!');
+                return false;
             }
 
             localStorage.setItem('user', JSON.stringify(user));
@@ -56,11 +48,15 @@ export class BackendAuthService implements AuthService {
             const cookies = new Cookies();
             cookies.set('token', token, { path: '/' });
 
+            isLoggedIn$.next(true);
+            activeUser$.next(user);
+
         } catch (err) {
             console.error('err::', err);
+            return false;
         }
 
-        return;
+        return true;
     }
 
     async register(email: string, username: string, password: string): Promise<boolean> {
@@ -70,8 +66,18 @@ export class BackendAuthService implements AuthService {
                 username: username,
                 password_raw: password
             });
-            localStorage.setItem('user', JSON.stringify(res.data.user));
+            localStorage.setItem('user', JSON.stringify({
+                username,
+                email,
+                id: -1
+            }));
             // TODO: LOGIN AFTER SUCCESSFUL REGISTER
+            isLoggedIn$.next(true);
+            activeUser$.next({
+                username,
+                email,
+                id: -1
+            });
             return true;
         } catch (err) {
         }

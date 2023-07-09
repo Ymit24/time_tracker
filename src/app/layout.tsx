@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import { ServicesProvider } from '@providers/ServicesProvider'
 import { TopNavBar } from '@components/TopNavBar'
 import './globals.css'
+import { SnackbarProvider } from 'notistack';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +27,7 @@ export default function RootLayout({
                         <ServicesProvider>
                             <TopNavBar />
                             <CssBaseline />
+                            <SnackbarProvider maxSnack={5} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} />
                             <Container maxWidth='md' sx={{ marginY: '20px' }}>
                                 {children}
                             </Container>

@@ -4,6 +4,7 @@ import { useState, MouseEvent } from "react";
 import { useServices } from "@providers/ServicesProvider";
 import { useRouter } from "next/navigation";
 import { useActiveUser, useIsLoggedIn } from "hooks/auth";
+import { enqueueSnackbar } from "notistack";
 
 
 export default function TopNavBar() {
@@ -34,6 +35,7 @@ export default function TopNavBar() {
 
     const onLogout = async () => {
         await auth.logout();
+        enqueueSnackbar('Logged out!', { variant: 'warning' });
         router.push('/auth');
     };
 

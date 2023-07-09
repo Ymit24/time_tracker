@@ -2,7 +2,6 @@ import Link from "@components/Link";
 import { Button, Card, Stack, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from "zod";
 
 export interface Props {
     onSubmit: (data: RegisterFormSchema) => void,
@@ -47,14 +46,12 @@ export default function RegisterForm(props: Props) {
 
                     <TextField
                         label='Password'
-                        type='password'
                         {...register('password')}
                     />
                     {errors.password && <Typography color='error'>{errors.password?.message}</Typography>}
 
                     <TextField
                         label='Password Confirmation'
-                        type='password'
                         {...register('password_confirm')}
                     />
                     {errors.password_confirm && <Typography color='error'>{errors.password_confirm?.message}</Typography>}
