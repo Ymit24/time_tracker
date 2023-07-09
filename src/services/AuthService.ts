@@ -12,10 +12,19 @@ export interface AuthService {
 
 export class BackendAuthService implements AuthService {
     constructor() {
-        const user = localStorage.getItem('user');
-        if (user) {
-            activeUser$.next(JSON.parse(user));
-            isLoggedIn$.next(true);
+        this.init();
+    }
+
+    async init() {
+        const userString = localStorage.getItem('user');
+        if (userString) {
+            try {
+                const user = JSON.parse(userString);
+                activeUser$.next(user);
+                isLoggedIn$.next(true);
+            } catch {
+                console.error('Failed to decode user from localStorage. Expected user, found: ', userString);
+            }
         }
     }
 
@@ -35,6 +44,12 @@ export class BackendAuthService implements AuthService {
 
             const token: string = res.data.token;
             const user: User = res.data.user;
+
+            console.log('data:', res.data);
+
+            if (!token || !user) {
+                console.warn('failed to register!');
+            }
 
             localStorage.setItem('user', JSON.stringify(user));
 

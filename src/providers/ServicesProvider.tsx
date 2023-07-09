@@ -21,6 +21,7 @@ export function useServices() {
 }
 
 export function ServicesProvider({ children }: Props) {
+    console.log('service provider render');
     const services = {
         auth: new BackendAuthService(),
     };
