@@ -11,20 +11,5 @@ export interface Props {
 }
 
 export default function TimeSheetLayout({ children }: Props) {
-    return (
-        <Grid container gap={2}>
-            <Grid xs={2}>
-                <Paper>
-                    <Stack gap={2} sx={{ alignItems: 'start', padding: '1.5rem' }}>
-                        <Typography variant='h6'>Timesheets</Typography>
-                        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((it, index) => <Link key={index} href={`/timesheets/${index}`}>Timesheet {index}</Link>)}
-                        <IconButton sx={{ alignSelf: 'center' }}><AddIcon color='success' /></IconButton>
-                    </Stack>
-                </Paper>
-            </Grid>
-            <Grid xs={9}>
-                {children}
-            </Grid>
-        </Grid>
-    );
+    return <>{children}</>;
 }
